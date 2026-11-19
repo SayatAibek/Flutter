@@ -8,7 +8,6 @@ class CartBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Level 4: Выбираем только количество книг (count), чтобы бейдж не перерисовывался при изменении total/quantity
     final count = context.select<Cart, int>((c) => c.count);
 
     return IconButton(

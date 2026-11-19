@@ -1,0 +1,7 @@
+# Add this inside the existing `flutter:` section of pubspec.yaml.
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/books/
+
+# If `uses-material-design: true` already exists, keep only the `assets:` lines under it.

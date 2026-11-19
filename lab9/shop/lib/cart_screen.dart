@@ -76,7 +76,7 @@ class CartScreen extends StatelessWidget {
                   },
                 ),
               ),
-              child!, // Используем переданный константный виджет
+              child!, 
             ],
           );
         },
