@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/api/api_exception.dart';
-import 'user_detail_screen.dart';
+import '../settings/settings_model.dart';
+import '../settings/settings_screen.dart';
 import 'user_create_screen.dart';
+import 'user_detail_screen.dart';
 import 'users_model.dart';
 
 class UsersScreen extends StatelessWidget {
@@ -11,6 +14,7 @@ class UsersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final m = context.watch<UsersModel>();
+    final shown = m.visible(context.watch<SettingsModel>().city);
 
     if (m.loading && m.items.isEmpty) {
       return Scaffold(
@@ -19,9 +23,10 @@ class UsersScreen extends StatelessWidget {
       );
     }
 
-    Widget body;
-    if (m.error != null) {
-      switch (m.error!) {
+    final Widget body;
+    final error = m.error;
+    if (error != null) {
+      switch (error) {
         case NoConnectionException():
           body = Center(
             child: Column(
@@ -33,7 +38,6 @@ class UsersScreen extends StatelessWidget {
               ],
             ),
           );
-          break;
         case ServerException(:final status):
           body = Center(
             child: Column(
@@ -45,36 +49,30 @@ class UsersScreen extends StatelessWidget {
               ],
             ),
           );
-          break;
         case NotFoundException():
           body = const Center(child: Text('Not Found'));
-          break;
         case UnauthorizedException():
           body = const Center(child: Text('Unauthorized'));
-          break;
         case BadResponseException():
           body = const Center(child: Text('Bad Response from server'));
-          break;
       }
-    } else if (m.items.isEmpty) {
+    } else if (shown.isEmpty) {
       body = const Center(child: Text('No users found'));
     } else {
       body = RefreshIndicator(
         onRefresh: m.load,
         child: ListView.separated(
-          itemCount: m.items.length,
+          itemCount: shown.length,
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {
-            final user = m.items[index];
+            final user = shown[index];
             return ListTile(
               title: Text(user.name),
               subtitle: Text('${user.email} • ${user.address.city}'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => UserDetailScreen(user: user)),
-                );
-              },
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => UserDetailScreen(user: user)),
+              ),
             );
           },
         ),
@@ -83,20 +81,36 @@ class UsersScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Users (Practice 11)'),
+        title: const Text('Users'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
+          ),
+          IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const UserCreateScreen()),
-              );
-            },
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const UserCreateScreen()),
+            ),
           ),
         ],
       ),
-      body: body,
+      body: Column(
+        children: [
+          if (m.fromCache)
+            MaterialBanner(
+              content: const Text('Saved data · no connection'),
+              actions: [
+                TextButton(onPressed: m.load, child: const Text('Retry')),
+              ],
+            ),
+          Expanded(child: body),
+        ],
+      ),
     );
   }
 }

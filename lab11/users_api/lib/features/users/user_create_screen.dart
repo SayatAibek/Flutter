@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'user.dart';
 import 'users_model.dart';
 
@@ -26,7 +27,7 @@ class _UserCreateScreenState extends State<UserCreateScreen> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_formKey.currentState?.validate() != true) return;
 
     setState(() => _saving = true);
 
@@ -36,6 +37,7 @@ class _UserCreateScreenState extends State<UserCreateScreen> {
       username: _usernameController.text.trim(),
       email: _emailController.text.trim(),
       phone: '1-770-736-8031 x56442',
+      website: null,
       address: const Address(
         street: 'Kulas Light',
         suite: 'Apt. 556',
@@ -43,7 +45,10 @@ class _UserCreateScreenState extends State<UserCreateScreen> {
         zipcode: '92998-3874',
         geo: Geo(lat: -37.3159, lng: 81.1496),
       ),
-      company: (name: 'Romaguera-Crona', catchPhrase: 'Multi-layered client-server neural-net'),
+      company: (
+        name: 'Romaguera-Crona',
+        catchPhrase: 'Multi-layered client-server neural-net',
+      ),
     );
 
     final model = context.read<UsersModel>();
@@ -56,9 +61,8 @@ class _UserCreateScreenState extends State<UserCreateScreen> {
     if (success) {
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to create user')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Failed to create user')));
     }
   }
 
@@ -81,7 +85,8 @@ class _UserCreateScreenState extends State<UserCreateScreen> {
               TextFormField(
                 controller: _usernameController,
                 decoration: const InputDecoration(labelText: 'Username'),
-                validator: (v) => v == null || v.isEmpty ? 'Enter username' : null,
+                validator: (v) =>
+                    v == null || v.isEmpty ? 'Enter username' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(

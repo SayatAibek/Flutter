@@ -15,14 +15,17 @@ class Geo {
   }
 
   Map<String, dynamic> toJson() => {
-        'lat': lat.toString(),
-        'lng': lng.toString(),
-      };
+    'lat': lat.toString(),
+    'lng': lng.toString(),
+  };
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Geo && runtimeType == other.runtimeType && lat == other.lat && lng == other.lng;
+      other is Geo &&
+          runtimeType == other.runtimeType &&
+          lat == other.lat &&
+          lng == other.lng;
 
   @override
   int get hashCode => Object.hash(lat, lng);
@@ -55,12 +58,12 @@ class Address {
   }
 
   Map<String, dynamic> toJson() => {
-        'street': street,
-        'suite': suite,
-        'city': city,
-        'zipcode': zipcode,
-        'geo': geo.toJson(),
-      };
+    'street': street,
+    'suite': suite,
+    'city': city,
+    'zipcode': zipcode,
+    'geo': geo.toJson(),
+  };
 
   @override
   bool operator ==(Object other) =>
@@ -119,22 +122,20 @@ class User {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'username': username,
-        'email': email,
-        'phone': phone,
-        'website': website,
-        'address': address.toJson(),
-        'company': {
-          'name': company.name,
-          'catchPhrase': company.catchPhrase,
-        },
-      };
+    'id': id,
+    'name': name,
+    'username': username,
+    'email': email,
+    'phone': phone,
+    'website': website,
+    'address': address.toJson(),
+    'company': {'name': company.name, 'catchPhrase': company.catchPhrase},
+  };
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is User && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) ||
+      other is User && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
